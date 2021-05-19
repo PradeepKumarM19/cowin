@@ -30,7 +30,7 @@ class CowinSlots:
             for data in result['centers']:
                 for session in data['sessions']:
                     slot_flag = False
-                    if session['min_age_limit'] == 18 and session['available_capacity_dose1'] >0:
+                    if session['min_age_limit'] == 18 and session['available_capacity_dose1'] >=0:
                         slot_flag = True
                     #TODO : Uncomment this section if you need data for 45+ second dose also
                     # elif session['min_age_limit'] == 45 and session['available_capacity_dose2'] >0:
@@ -47,18 +47,18 @@ class CowinSlots:
                             "time": datetime.datetime.now().strftime('%H:%M:%S')
                         }
                         final.append(hospitals)
-                        final_string = json.dumps(final, indent=4, separators=(',', ': '))
-        return final_string
+        return final
 
-    def send_twitter_notification(self, message):
+    def send_twitter_notification(self, messages):
         twitter = Twython(
             consumer_key,
             consumer_secret,
             access_token,
             access_token_secret
         )
-        twitter.update_status(status=message)
-        logger.warn("Tweeted message %s", message)
+        for message in messages:
+            logger.warn("Tweeted message %s", message)
+            twitter.update_status(status=message)
 
 if __name__ == "__main__":
     try :
@@ -66,7 +66,6 @@ if __name__ == "__main__":
         response = list(cowin.get_response())
         results = cowin.get_available_slots(response)
         if results:
-            logger.warn("The response is %s", results)
             cowin.send_twitter_notification(results)
         else:
             logger.warn("There were no slots opened for 18-44 at time : %s", datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
