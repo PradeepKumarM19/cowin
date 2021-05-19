@@ -6,8 +6,8 @@ from twython import Twython
 
 from auth import consumer_key, consumer_secret, access_token, access_token_secret
 
-
-logger = logging.getLogger("cowin")
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("cowin_application")
 
 class CowinSlots:
     def __init__(self):
@@ -30,7 +30,7 @@ class CowinSlots:
             for data in result['centers']:
                 for session in data['sessions']:
                     slot_flag = False
-                    if session['min_age_limit'] == 18 and session['available_capacity_dose1'] >0:
+                    if session['min_age_limit'] == 18 and session['available_capacity_dose1'] >=0:
                         slot_flag = True
                     #TODO : Uncomment this section if you need data for 45+ second dose also
                     # elif session['min_age_limit'] == 45 and session['available_capacity_dose2'] >0:
@@ -57,8 +57,8 @@ class CowinSlots:
             access_token_secret
         )
         for message in messages:
-            logger.warn("Tweeted message %s", message)
-            twitter.update_status(status=message)
+            logger.info("Tweeted message %s", message)
+            twitter.update_status(status=str(message))
 
 if __name__ == "__main__":
     try :
@@ -66,8 +66,9 @@ if __name__ == "__main__":
         response = list(cowin.get_response())
         results = cowin.get_available_slots(response)
         if results:
+            logger.info("Tweeted message %s", results)
             cowin.send_twitter_notification(results)
         else:
-            logger.warn("There were no slots opened for 18-44 at time : %s", datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
+            logger.info("There were no slots opened for 18-44 at time : %s", datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
     except Exception as e:
-        response = logger.warn("The exception is %s", e)
+            logger.warn("The exception is %s", e)
