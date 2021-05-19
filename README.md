@@ -6,6 +6,8 @@ The Main purpose of this projcet is to get the cowin vaccination deatils and pus
 Pre-requisites
 * Python 3+
 * Install the required dependenies from requirement.txt file
+    - Python3 : pip3 install -r requirements.txt
+    - Python2 : pip install -r requirements.txt
 * Create a twitter developers account (https://developer.twitter.com/)
 * Once the Twitter account is approved, Create an application in the twitter account (https://developer.twitter.com/en/portal/apps/)
 * Give the application required permission(Read, Write, Direct Message) and then generate the Consumer Keys and Authentication Tokens.
