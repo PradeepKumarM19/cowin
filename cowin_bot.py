@@ -30,7 +30,7 @@ class CowinSlots:
             for data in result['centers']:
                 for session in data['sessions']:
                     slot_flag = False
-                    if session['min_age_limit'] == 18 and session['available_capacity_dose1'] >=0:
+                    if session['min_age_limit'] == 18 and session['available_capacity_dose1'] >0:
                         slot_flag = True
                     #TODO : Uncomment this section if you need data for 45+ second dose also
                     # elif session['min_age_limit'] == 45 and session['available_capacity_dose2'] >0:
