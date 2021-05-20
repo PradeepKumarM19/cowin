@@ -71,6 +71,7 @@ if __name__ == "__main__":
                 logger.info("There were no slots opened for 18-44 at time : %s", datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
         except Exception as e:
                 logger.warn("The exception is %s", e)
+                logger.info("*************sleeping for 10 additional seconds due to exception***************")
                 time.sleep(10)
-        logger.info("Waiting for 5 seconds............")
-        time.sleep(5)
+        logger.info("Waiting for 7 seconds............")
+        time.sleep(7)
