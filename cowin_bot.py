@@ -2,6 +2,7 @@ import requests
 import datetime
 import logging
 import json
+import time
 from twython import Twython
 
 from auth import consumer_key, consumer_secret, access_token, access_token_secret
@@ -37,10 +38,11 @@ class CowinSlots:
                     # elif session['min_age_limit'] == 45 and session['available_capacity_dose2'] >0:
                     #     slot_flag = True
                     if slot_flag:
+                        #logger.info("time %s", time)
                         logger.info("slot opened for %s for %s at %s ", data['name'], session['date'], time)
                         hospitals = f"""
                         {data['pincode']} ON {session['date']} Type: {session['vaccine']} Age: {session['min_age_limit']}
-                        Hospital: {data['name']} Address: {data['address']} Opened at: {time}
+                        Hospital: {data['name']} Opened at: {time}
                         capacity(dose1: {session['available_capacity_dose1']}, dose2: {session['available_capacity_dose2']})
                         """
                         final.append(hospitals)
@@ -58,13 +60,17 @@ class CowinSlots:
             twitter.update_status(status=message)
 
 if __name__ == "__main__":
-    try :
-        cowin = CowinSlots()
-        response = list(cowin.get_response())
-        results = cowin.get_available_slots(response)
-        if results:
-            cowin.send_twitter_notification(results)
-        else:
-            logger.info("There were no slots opened for 18-44 at time : %s", datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
-    except Exception as e:
-            logger.warn("The exception is %s", e)
+    while(True):
+        try :
+            cowin = CowinSlots()
+            response = list(cowin.get_response())
+            results = cowin.get_available_slots(response)
+            if results:
+                cowin.send_twitter_notification(results)
+            else:
+                logger.info("There were no slots opened for 18-44 at time : %s", datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
+        except Exception as e:
+                logger.warn("The exception is %s", e)
+                time.sleep(10)
+        logger.info("Waiting for 5 seconds............")
+        time.sleep(5)
