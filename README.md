@@ -20,5 +20,4 @@ Pre-requisites
 1) Upadte the Keys in auth.py file
 2) Run the cowin_bot.py (python cowin_bot.py)
 3) If you need to schedule the application
-    - Windows : Use windows scheduler and run the cowin.bat file (interval 2-5 seconds)
-    - Linux : Use crontab (interval 2 -5 seconds)
+    - Windows : Run the cowin.bat file.
