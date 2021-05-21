@@ -30,20 +30,18 @@ class CowinSlots:
         for result in response:
             for data in result['centers']:
                 for session in data['sessions']:
-                    time = datetime.datetime.now().strftime('%H:%M:%S %f')[:-3]
                     slot_flag = False
-                    if session['min_age_limit'] == 18 and session['available_capacity_dose1'] >0:
+                    if session['min_age_limit'] == 18 and session['available_capacity'] >0:
                         slot_flag = True
                     #TODO : Uncomment this section if you need data for 45+ second dose also
-                    # elif session['min_age_limit'] == 45 and session['available_capacity_dose2'] >0:
+                    # elif session['min_age_limit'] == 45 and session['available_capacity'] >0:
                     #     slot_flag = True
                     if slot_flag:
-                        #logger.info("time %s", time)
-                        logger.info("slot opened for %s for %s at %s ", data['name'], session['date'], time)
+                        logger.info("slot opened for %s for %s", data['name'], session['date'])
                         hospitals = f"""
-                        {data['pincode']} ON {session['date']} Type: {session['vaccine']} Age: {session['min_age_limit']}
-                        Hospital: {data['name']} Opened at: {time}
-                        capacity(dose1: {session['available_capacity_dose1']}, dose2: {session['available_capacity_dose2']})
+                        {data['pincode']} ON {session['date']} Type: {session['vaccine']}
+                        Age: {session['min_age_limit']} Hospital: {data['name']}
+                        capacity: {session['available_capacity']}(dose1: {session['available_capacity_dose1']}, dose2: {session['available_capacity_dose2']})
                         """
                         final.append(hospitals)
         return final
@@ -67,11 +65,18 @@ if __name__ == "__main__":
             results = cowin.get_available_slots(response)
             if results:
                 cowin.send_twitter_notification(results)
+                #message = f"TWeeted the message for 18-44 at time : {datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
             else:
                 logger.info("There were no slots opened for 18-44 at time : %s", datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
+                #message = f"There were no slots opened for 18-44 at time : {datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
         except Exception as e:
                 logger.warn("The exception is %s", e)
                 logger.info("*************sleeping for 10 additional seconds due to exception***************")
+                #message = f"**************EXCEPTION OCCURES {e} at {datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}****************"
                 time.sleep(10)
-        logger.info("Waiting for 7 seconds............")
-        time.sleep(7)
+        #TODO : If you need to write the logs into a text file, Uncomment the code and change the location
+        # with open("C:\\Users\\pradeepk3\\Desktop\\cowin\\log.txt", "a") as myfile:
+        #     myfile.write(message)
+        #     myfile.write("\n")
+        logger.info("Waiting for 9 seconds............")
+        time.sleep(9)
