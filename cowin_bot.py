@@ -70,7 +70,7 @@ if __name__ == "__main__":
             results = cowin.get_available_slots(response)
             if results:
                     cowin.send_twitter_notification(results)
-                #message = f"TWeeted the message for 18-44 at time : {datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
+                    #message = f"TWeeted the message for 18-44 at time : {datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
             else:
                 logger.info("There were no slots opened for 18-44 at time : %s", datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
                 #message = f"There were no slots opened for 18-44 at time : {datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
