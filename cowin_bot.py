@@ -55,12 +55,12 @@ if __name__ == "__main__":
             notify = Notify()
             notify.notify_available_slots()
         except Exception as e:
-                logger.warn("sleeping for 12 additional seconds as exception: %s", e)
-                time.sleep(12)
-                message = f"**************EXCEPTION OCCURES {e} at {datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}****************"
-                #TODO : If you need to write the logs into a text file, Uncomment the code and change the location
-                # with open("C:\\Users\\pradeepk3\\Desktop\\cowin\\log.txt", "a") as myfile:
-                #     myfile.write(message)
-                #     myfile.write("\n")
+            logger.warn("sleeping for 12 additional seconds as exception: %s", e)
+            time.sleep(12)
+            message = f"**************EXCEPTION OCCURES {e} at {datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}****************"
+            #TODO : If you need to write the logs into a text file, Uncomment the code and change the location
+            # with open("C:\\Users\\pradeepk3\\Desktop\\cowin\\log.txt", "a") as myfile:
+            #     myfile.write(message)
+            #     myfile.write("\n")
         logger.info("Waiting for 4 seconds............")
         time.sleep(4)
