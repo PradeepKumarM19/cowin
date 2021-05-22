@@ -38,11 +38,11 @@ class CowinSlots:
                     #     slot_flag = True
                     if slot_flag:
                         logger.info("slot opened for %s for %s", data['name'], session['date'])
-                        hospitals = f"""
-                        {data['pincode']} ON {session['date']} Type: {session['vaccine']}
-                        Age: {session['min_age_limit']} Hospital: {data['name']}
-                        capacity: {session['available_capacity']}(dose1: {session['available_capacity_dose1']}, dose2: {session['available_capacity_dose2']})
-                        """
+                        hospitals = (
+                            f"{data['pincode']} ON {session['date']} Type: {session['vaccine']}\n"
+                            f"Age: {session['min_age_limit']} Hospital: {data['name']}\n"
+                            f"capacity: {session['available_capacity']}(dose1: {session['available_capacity_dose1']}, dose2: {session['available_capacity_dose2']})"
+                        )
                         final.append(hospitals)
         return final
 
