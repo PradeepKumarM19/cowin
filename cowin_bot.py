@@ -38,7 +38,7 @@ class Notify(CowinSlots):
                 if session['min_age_limit'] == 18 and (session['available_capacity'] >0 and session['available_capacity_dose1'] >0):
                     logger.info("slot opened for %s for %s", data['name'], session['date'])
                     hospitals = (
-                        f"{data['pincode']} ON {session['date']} Type: {session['vaccine']}\n"
+                        f"{data['pincode']} on {session['date']} Type: {session['vaccine']}\n"
                         f"Age: {session['min_age_limit']} Hospital: {data['name']}\n"
                         f"capacity: {session['available_capacity']}(dose1: {session['available_capacity_dose1']}, dose2: {session['available_capacity_dose2']})"
                     )
