@@ -25,60 +25,40 @@ class CowinSlots:
         for date in self.dates:
             yield requests.get(self.url.format(date), headers=self.header).json()
 
-    def get_available_slots(self, response):
+    def notify_available_slots(self, response):
         final = []
-        for result in response:
-            for data in result['centers']:
-                for session in data['sessions']:
-                    slot_flag = False
-                    if session['min_age_limit'] == 18:
-                        if session['available_capacity'] >0 or session['available_capacity_dose1'] >0 or  session['available_capacity_dose2'] >0:
-                            slot_flag = True
-                        #TODO : Uncomment this section if you need data for 45+ second dose also
-                        # elif session['min_age_limit'] == 45:
-                        #   if session['available_capacity'] >0 or session['available_capacity_dose1'] >0 or  session['available_capacity_dose2'] >0:
-                        #       slot_flag = True
-                        if slot_flag:
-                            logger.info("slot opened for %s for %s", data['name'], session['date'])
-                            hospitals = (
-                                f"{data['pincode']} ON {session['date']} Type: {session['vaccine']}\n"
-                                f"Age: {session['min_age_limit']} Hospital: {data['name']}\n"
-                                f"capacity: {session['available_capacity']}(dose1: {session['available_capacity_dose1']}, dose2: {session['available_capacity_dose2']})"
-                                )
-                            final.append(hospitals)
-        return final
-
-    def send_twitter_notification(self, messages):
         twitter = Twython(
             consumer_key,
             consumer_secret,
             access_token,
             access_token_secret
         )
-        for message in messages:
-            logger.info("Tweeted message %s", message)
-            try:
-                twitter.update_status(status=message)
-            except TwythonError as e:
-                logger.info("Duplicate message exception. Ignoring")
+        for data in response['centers']:
+            for session in data['sessions']:
+                if session['min_age_limit'] == 18 and (session['available_capacity'] >0 or session['available_capacity_dose1'] >0 or session['available_capacity_dose2'] >0):
+                    logger.info("slot opened for %s for %s", data['name'], session['date'])
+                    hospitals = (
+                        f"{data['pincode']} ON {session['date']} Type: {session['vaccine']}\n"
+                        f"Age: {session['min_age_limit']} Hospital: {data['name']}\n"
+                        f"capacity: {session['available_capacity']}(dose1: {session['available_capacity_dose1']}, dose2: {session['available_capacity_dose2']})"
+                    )
+                    try:
+                        logger.info("Tweeted message %s", hospitals)
+                        twitter.update_status(status=hospitals)
+                    except TwythonError as e:
+                        logger.info("Duplicate message exception. Ignoring")
+
 
 if __name__ == "__main__":
     while(True):
         try :
             cowin = CowinSlots()
-            response = list(cowin.get_response())
-            results = cowin.get_available_slots(response)
-            if results:
-                    cowin.send_twitter_notification(results)
-                    #message = f"TWeeted the message for 18-44 at time : {datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
-            else:
-                logger.info("There were no slots opened for 18-44 at time : %s", datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
-                #message = f"There were no slots opened for 18-44 at time : {datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}"
+            reponse = next(cowin.get_response())
+            cowin.notify_available_slots(reponse)
         except Exception as e:
-                logger.warn("The exception is %s", e)
-                logger.info("*************sleeping for 10 additional seconds due to exception***************")
-                #message = f"**************EXCEPTION OCCURES {e} at {datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}****************"
+                logger.warn("sleeping for 10 additional seconds as exception: %s", e)
                 time.sleep(10)
+                #message = f"**************EXCEPTION OCCURES {e} at {datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}****************"
         #TODO : If you need to write the logs into a text file, Uncomment the code and change the location
         # with open("C:\\Users\\pradeepk3\\Desktop\\cowin\\log.txt", "a") as myfile:
         #     myfile.write(message)
